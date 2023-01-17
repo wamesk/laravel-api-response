@@ -45,7 +45,7 @@ Response:
 }
 ```
 
-You can pass internal code using `message()` function that helps you find of response in case of error.
+You can pass internal code using `code()` function that helps you find of response in case of error.
 
 ```php
 return ApiResponse::code('1.2.1')->message('Hello')->response(201);
@@ -59,6 +59,27 @@ Response:
   "code": "1.1.1",
   "errors": null,
   "message": "Hello"
+}
+```
+
+If you don't use `message()` function but use `code()` function, and it will try to translate your code to message.
+
+You can also set prefix of translation as second parameter *(Default is 'api')*.
+
+```php
+return ApiResponse::code('1.2.1', 'user')->response(201); // return "message": "user.1.1.1" as in Response example
+
+return ApiResponse::code('1.2.1')->response(201); // When not presented second parameter it will use default and return "message": "api.1.1.1"
+```
+
+Response:
+
+```json
+{
+  "data": null,
+  "code": "1.1.1",
+  "errors": null,
+  "message": "user.1.1.1"
 }
 ```
 

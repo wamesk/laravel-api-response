@@ -25,14 +25,20 @@ class ApiResponse
     private static string|null $message = null;
 
     /**
+     * @var string|null
+     */
+    private static string|null $codePrefix = null;
+
+    /**
      * Internal Response Code
      *
      * @param string $code
      * @return static
      */
-    public static function code(string $code): static
+    public static function code(string $code, string $codePrefix = 'api'): static
     {
         static::$code = $code;
+        static::$codePrefix = $codePrefix;
 
         return new static;
     }
@@ -99,20 +105,24 @@ class ApiResponse
      */
     public static function response(int $statusCode = 200): \Illuminate\Http\JsonResponse
     {
+        $message = null;
+        if (self::$message) $message = self::$message;
+        else $message = self::$code ? __(self::$codePrefix .'.' . self::$code) : null;
+
         if (gettype(self::$data) === 'array') {
             if (key_exists('data', self::$data)) {
                 $response = collect(self::$data);
                 $response = $response->merge([
                     'code' => self::$code,
                     'errors' => self::$errors,
-                    'message' => self::$message ?? __('api.' . self::$code),
+                    'message' => $message,
                 ]);
             } else {
                 $response = [
                     'data' => self::$data,
                     'code' => self::$code,
                     'errors' => self::$errors,
-                    'message' => self::$message ?? __('api.' . self::$code),
+                    'message' => $message,
                 ];
             }
         } else {
@@ -120,7 +130,7 @@ class ApiResponse
                 'data' => self::$data,
                 'code' => self::$code,
                 'errors' => self::$errors,
-                'message' => self::$message ?? __('api.' . self::$code),
+                'message' => $message,
             ];
         }
 
