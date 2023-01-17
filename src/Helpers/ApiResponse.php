@@ -1,6 +1,6 @@
 <?php
 
-namespace Wame\ApiResponse;
+namespace Wame\ApiResponse\Helpers;
 
 class ApiResponse
 {
