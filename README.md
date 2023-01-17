@@ -20,6 +20,12 @@ return ApiResponse::response(201);
 
 Response:
 ```json
+{
+    "data": null,
+    "code": null,
+    "errors": null,
+    "message": null
+}
 ```
 
 You can also pass message in your response by adding `message()` function before response function.
@@ -32,6 +38,9 @@ Response:
 
 ```json
 {
+  "data": null,
+  "code": null,
+  "errors": null,
   "message": "Hello"
 }
 ```
@@ -46,8 +55,10 @@ Response:
 
 ```json
 {
-  "message": "Hello",
-  "code": "1.2.1"
+  "data": null,
+  "code": "1.1.1",
+  "errors": null,
+  "message": "Hello"
 }
 ```
 
@@ -61,12 +72,32 @@ Response:
 
 ```json
 {
-  "message": "Hello",
-  "code": "1.2.1",
   "data": {
     "id": 1,
     "name": "Jhon Jhonson"
-  }
+  },
+  "code": "1.1.1",
+  "errors": null,
+  "message": "Hello"
+}
+```
+
+If you want to inform frontend about some error you can use `errors()` function.
+
+```php
+return ApiResponseDev::errors(['email' => 'Email is required'])->response(201);
+```
+
+Response:
+
+```json
+{
+  "data": null,
+  "code": null,
+  "errors": {
+    "email": "Email is required"
+  },
+  "message": null
 }
 ```
 
@@ -121,7 +152,7 @@ Response:
             },
             {
                 "url": "http://localhost:8888/api/v1/test?page=3",
-                "label": "2",
+                "label": "3",
                 "active": false
             },
             {
@@ -136,6 +167,7 @@ Response:
         "total": 6
     },
     "code": "1.2.1",
+    "errors": null,
     "message": "Hello"
 }
 ```

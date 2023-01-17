@@ -15,6 +15,11 @@ class ApiResponse
     private static mixed $data = null;
 
     /**
+     * @var mixed|null
+     */
+    private static mixed $errors = null;
+
+    /**
      * @var string|null
      */
     private static string|null $message = null;
@@ -46,10 +51,23 @@ class ApiResponse
     }
 
     /**
+     * Response Data
+     *
+     * @param mixed $errors
+     * @return static
+     */
+    public static function errors(mixed $errors): static
+    {
+        static::$errors = $errors;
+
+        return new static;
+    }
+
+    /**
      * Response Data with Pagination
      *
-     * @param mixed $data
-     * @param $resource
+     * @param mixed $pagination
+     * @param null $resource
      * @return static
      */
     public static function collection(mixed $pagination, $resource = null): static
@@ -86,12 +104,14 @@ class ApiResponse
                 $response = collect(self::$data);
                 $response = $response->merge([
                     'code' => self::$code,
+                    'errors' => self::$errors,
                     'message' => self::$message ?? __('api.' . self::$code),
                 ]);
             } else {
                 $response = [
                     'data' => self::$data,
                     'code' => self::$code,
+                    'errors' => self::$errors,
                     'message' => self::$message ?? __('api.' . self::$code),
                 ];
             }
@@ -99,6 +119,7 @@ class ApiResponse
             $response = [
                 'data' => self::$data,
                 'code' => self::$code,
+                'errors' => self::$errors,
                 'message' => self::$message ?? __('api.' . self::$code),
             ];
         }
