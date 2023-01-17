@@ -52,10 +52,10 @@ class ApiResponse
      * @param $resource
      * @return static
      */
-    public static function collection(mixed $data, $resource = null): static
+    public static function collection(mixed $pagination, $resource = null): static
     {
-        if ($resource) static::$data = ($resource::collection($data))->toResponse(app('request'))->getData();
-        else static::$data = $data;
+        if ($resource) static::$data = (array)($resource::collection($pagination))->toResponse(app('request'))->getData();
+        else static::$data = $pagination->toArray();
 
         return new static;
     }
@@ -81,11 +81,27 @@ class ApiResponse
      */
     public static function response(int $statusCode = 200): \Illuminate\Http\JsonResponse
     {
-        $response = collect( self::$data);
-        $response = $response->merge([
-            'code' => self::$code,
-            'message' => self::$message ?? __('api.' . self::$code),
-        ]);
+        if (gettype(self::$data) === 'array') {
+            if (key_exists('data', self::$data)) {
+                $response = collect(self::$data);
+                $response = $response->merge([
+                    'code' => self::$code,
+                    'message' => self::$message ?? __('api.' . self::$code),
+                ]);
+            } else {
+                $response = [
+                    'data' => self::$data,
+                    'code' => self::$code,
+                    'message' => self::$message ?? __('api.' . self::$code),
+                ];
+            }
+        } else {
+            $response = [
+                'data' => self::$data,
+                'code' => self::$code,
+                'message' => self::$message ?? __('api.' . self::$code),
+            ];
+        }
 
         return response()->json($response)->setStatusCode($statusCode);
     }
