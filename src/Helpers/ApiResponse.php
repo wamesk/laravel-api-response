@@ -1,5 +1,6 @@
 <?php
 
+namespace Wame\ApiResponse;
 
 class ApiResponse
 {
@@ -24,7 +25,7 @@ class ApiResponse
      * @param string $code
      * @return static
      */
-    public static function code(string $code)
+    public static function code(string $code): static
     {
         static::$code = $code;
 
@@ -37,7 +38,7 @@ class ApiResponse
      * @param mixed $data
      * @return static
      */
-    public static function data(mixed $data)
+    public static function data(mixed $data): static
     {
         static::$data = $data;
 
@@ -65,7 +66,7 @@ class ApiResponse
      * @param string $message
      * @return static
      */
-    public static function message(string $message)
+    public static function message(string $message): static
     {
         static::$message = $message;
 
@@ -76,10 +77,9 @@ class ApiResponse
      * Response :D
      *
      * @param int $statusCode
-     * @return \Illuminate\Http\Response|mixed
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @return \Illuminate\Http\JsonResponse
      */
-    public static function response(int $statusCode)
+    public static function response(int $statusCode = 200): \Illuminate\Http\JsonResponse
     {
         $response = collect( self::$data);
         $response = $response->merge([
