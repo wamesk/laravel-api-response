@@ -2,6 +2,8 @@
 
 namespace Wame\ApiResponse\Helpers;
 
+use Illuminate\Pagination\LengthAwarePaginator;
+
 class ApiResponse
 {
     /**
@@ -72,11 +74,11 @@ class ApiResponse
     /**
      * Response Data with Pagination
      *
-     * @param mixed $pagination
+     * @param LengthAwarePaginator $pagination
      * @param null $resource
      * @return static
      */
-    public static function collection(mixed $pagination, $resource = null): static
+    public static function collection(LengthAwarePaginator $pagination, $resource = null): static
     {
         if ($resource) static::$data = (array)($resource::collection($pagination))->toResponse(app('request'))->getData();
         else static::$data = $pagination->toArray();
