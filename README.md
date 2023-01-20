@@ -48,7 +48,7 @@ Response:
 You can pass internal code using `code()` function that helps you find of response in case of error.
 
 ```php
-return ApiResponse::code('1.2.1')->message('Hello')->response(201);
+return ApiResponse::code('1.2')->message('Hello')->response(201);
 ```
 
 Response:
@@ -56,7 +56,7 @@ Response:
 ```json
 {
   "data": null,
-  "code": "1.1.1",
+  "code": "1.2",
   "errors": null,
   "message": "Hello"
 }
@@ -67,9 +67,9 @@ If you don't use `message()` function but use `code()` function, and it will try
 You can also set prefix of translation as second parameter *(Default is 'api')*.
 
 ```php
-return ApiResponse::code('1.2.1', 'user')->response(201); // return "message": "user.1.1.1" as in Response example
+return ApiResponse::code('1.2', 'user')->response(201); // return "message": "user.1.2" as in Response example
 
-return ApiResponse::code('1.2.1')->response(201); // When not presented second parameter it will use default and return "message": "api.1.1.1"
+return ApiResponse::code('1.2')->response(201); // When not provided second parameter it will use default and return "message": "api.1.2"
 ```
 
 Response:
@@ -77,16 +77,27 @@ Response:
 ```json
 {
   "data": null,
-  "code": "1.1.1",
+  "code": "1.2",
   "errors": null,
-  "message": "user.1.1.1"
+  "message": "user.1.2"
+}
+```
+
+When not provided second parameter
+
+```json
+{
+  "data": null,
+  "code": "1.2",
+  "errors": null,
+  "message": "api.1.2"
 }
 ```
 
 You can pass data using `data()` function.
 
 ```php
-return ApiResponse::data(['id' => 1, 'name' => 'Jhon Jhonson'])->code('1.2.1')->message('Hello')->response(201);
+return ApiResponse::data(['id' => 1, 'name' => 'Jhon Jhonson'])->code('1.2')->message('Hello')->response(201);
 ```
 
 Response:
@@ -97,7 +108,7 @@ Response:
     "id": 1,
     "name": "Jhon Jhonson"
   },
-  "code": "1.1.1",
+  "code": "1.2",
   "errors": null,
   "message": "Hello"
 }
@@ -128,7 +139,7 @@ You can use this function by passing paginated data, and you can also pass Resou
 ```php
 $users = User::paginate(10);
 
-return ApiResponse::collection($users, UserResource::class)->code('1.2.1')->message('Hello')->response(201);
+return ApiResponse::collection($users, UserResource::class)->code('1.2')->message('Hello')->response(201);
 ```
 
 Response:
@@ -187,7 +198,7 @@ Response:
         "to": 2,
         "total": 6
     },
-    "code": "1.2.1",
+    "code": "1.2",
     "errors": null,
     "message": "Hello"
 }
