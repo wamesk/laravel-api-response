@@ -105,6 +105,7 @@ class ApiResponse
      */
     public static function response(int $statusCode = 200): \Illuminate\Http\JsonResponse
     {
+        if ($statusCode === 0) $statusCode = 500;
         $message = null;
         if (self::$message) $message = self::$message;
         else $message = self::$code ? __(self::$codePrefix .'.' . self::$code) : null;
