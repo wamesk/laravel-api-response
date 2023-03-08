@@ -19,6 +19,11 @@ class ApiResponse
     /**
      * @var mixed|null
      */
+    private static mixed $additionalData = null;
+
+    /**
+     * @var mixed|null
+     */
     private static mixed $errors = null;
 
     /**
@@ -100,6 +105,19 @@ class ApiResponse
     }
 
     /**
+     * Meta Data
+     *
+     * @param mixed $message
+     * @return static
+     */
+    public static function additionalData(mixed $additionalData): static
+    {
+        static::$additionalData = $additionalData;
+
+        return new static;
+    }
+
+    /**
      * Response :D
      *
      * @param int $statusCode
@@ -108,7 +126,6 @@ class ApiResponse
     public static function response(int $statusCode = 200): \Illuminate\Http\JsonResponse
     {
         if ($statusCode === 0) $statusCode = 500;
-        $message = null;
         if (self::$message) $message = self::$message;
         else $message = self::$code ? __(self::$codePrefix .'.' . self::$code) : null;
 
@@ -118,6 +135,7 @@ class ApiResponse
                 $response = $response->merge([
                     'code' => self::$code,
                     'errors' => self::$errors,
+                    'additional_data' => self::$additionalData,
                     'message' => $message,
                 ]);
             } else {
@@ -125,6 +143,7 @@ class ApiResponse
                     'data' => self::$data,
                     'code' => self::$code,
                     'errors' => self::$errors,
+                    'additional_data' => self::$additionalData,
                     'message' => $message,
                 ];
             }
@@ -133,6 +152,7 @@ class ApiResponse
                 'data' => self::$data,
                 'code' => self::$code,
                 'errors' => self::$errors,
+                'additional_data' => self::$additionalData,
                 'message' => $message,
             ];
         }
