@@ -14,6 +14,8 @@ For basic response use class and call response() function and pass status code n
 
 This will not send any data itself, this function is used last to generate response and set status code.
 
+Usage:
+
 ```php
 return ApiResponse::response(201);
 ```
@@ -28,7 +30,39 @@ Response:
 }
 ```
 
+For exceptions use `exception()` function and pass whole **Exception**;
+
+It will check your `.env` file if you have `APP_DEBUG` enabled.
+If true it will dump the exception using `dd()` php function.
+If false it will return response with custom message.
+Custom message contains file and line information.
+
+**You can use all other functions with this except `response()`.**
+
+Usage:
+
+```php
+try {
+    // code
+} catch (\Exception $exception) {
+    return ApiResponse::exception($exception);
+}
+
+```
+
+Response:
+```json
+{
+    "data": null,
+    "code": null,
+    "errors": null,
+    "message": "Exception found in file C:\\projects\\project\\app\\Http\\Controllers\\v1\\UserController.php on line 33"
+}
+```
+
 You can also pass message in your response by adding `message()` function before response function.
+
+Usage:
 
 ```php
 return ApiResponse::message('Hello')->response(201);
@@ -149,11 +183,11 @@ Response:
     "data": [
         {
             "id": 1,
-            "name": "Jhon Jhonson",
+            "name": "Jhon Jhonson"
         },
         {
             "id": 2,
-            "name": "Patrick Jhonson",
+            "name": "Patrick Jhonson"
         }
     ],
     "links": {

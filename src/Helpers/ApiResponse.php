@@ -159,4 +159,13 @@ class ApiResponse
 
         return response()->json($response)->setStatusCode($statusCode);
     }
+
+    public static function exception(\Exception $exception): \Illuminate\Http\JsonResponse
+    {
+        if (env('app_debug')) dd($exception);
+
+        self::$message = __('wamesk-api-response.exception-message', ['file' => $exception->getFile(), 'line' => $exception->getLine()]);
+
+        return self::response(500);
+    }
 }

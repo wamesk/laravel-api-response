@@ -17,6 +17,13 @@
             "Wame\\ApiResponse\\": "src/"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wame\\ApiResponse\\LaravelApiResponseServiceProvider"
+            ]
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
