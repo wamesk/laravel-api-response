@@ -21,8 +21,8 @@ class LaravelApiResponseServiceProvider extends ServiceProvider
     /**
      * @return void
      */
-    protected function registerTranslations(): void
+    protected function publishTranslations(): void
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'wame-auth');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'wame-api-response');
     }
 }
