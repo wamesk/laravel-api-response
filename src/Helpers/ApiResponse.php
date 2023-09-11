@@ -162,7 +162,7 @@ class ApiResponse
 
     public static function exception(\Exception $exception): \Illuminate\Http\JsonResponse
     {
-        if (env('app_debug')) dd($exception);
+        if (env('APP_DEBUG')) dd($exception);
 
         self::$message = __('wamesk-api-response.exception-message', ['file' => $exception->getFile(), 'line' => $exception->getLine()]);
 
