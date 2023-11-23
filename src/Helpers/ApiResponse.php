@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wame\ApiResponse\Helpers;
 
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 
 class ApiResponse
 {
-    /**
-     * @var string|null
-     */
-    private static string|null $code = null;
+    private static ?string $code = null;
 
     /**
      * @var mixed|null
@@ -26,113 +28,104 @@ class ApiResponse
      */
     private static mixed $errors = null;
 
-    /**
-     * @var string|null
-     */
-    private static string|null $message = null;
+    private static ?string $message = null;
 
-    /**
-     * @var string|null
-     */
-    private static string|null $codePrefix = null;
+    private static ?string $codePrefix = null;
 
     /**
      * Internal Response Code
-     *
-     * @param string $code
-     * @return static
      */
-    public static function code(string $code, string $codePrefix = 'api'): static
-    {
+    public static function code(
+        string $code,
+        string $codePrefix = 'api',
+    ): static {
         static::$code = $code;
         static::$codePrefix = $codePrefix;
 
-        return new static;
+        return new static();
     }
 
     /**
      * Response Data
-     *
-     * @param mixed $data
-     * @return static
      */
-    public static function data(mixed $data): static
-    {
+    public static function data(
+        mixed $data,
+    ): static {
         static::$data = $data;
 
-        return new static;
+        return new static();
     }
 
     /**
      * Response Data
-     *
-     * @param mixed $errors
-     * @return static
      */
-    public static function errors(mixed $errors): static
-    {
+    public static function errors(
+        mixed $errors,
+    ): static {
         static::$errors = $errors;
 
-        return new static;
+        return new static();
     }
 
     /**
      * Response Data with Pagination
      *
-     * @param LengthAwarePaginator $pagination
      * @param null $resource
-     * @return static
      */
-    public static function collection(LengthAwarePaginator $pagination, $resource = null): static
-    {
-        if ($resource) static::$data = (array)($resource::collection($pagination))->toResponse(app('request'))->getData();
-        else static::$data = $pagination->toArray();
+    public static function collection(
+        LengthAwarePaginator $pagination,
+        $resource = null,
+    ): static {
+        if ($resource) {
+            static::$data = (array) ($resource::collection($pagination))->toResponse(app(abstract: 'request'))->getData();
+        } else {
+            static::$data = $pagination->toArray();
+        }
 
-        return new static;
+        return new static();
     }
 
     /**
      * Response Message
-     *
-     * @param string $message
-     * @return static
      */
-    public static function message(string $message): static
-    {
+    public static function message(
+        string $message,
+    ): static {
         static::$message = $message;
 
-        return new static;
+        return new static();
     }
 
     /**
      * Meta Data
-     *
-     * @param mixed $message
-     * @return static
      */
-    public static function additionalData(mixed $additionalData): static
-    {
+    public static function additionalData(
+        mixed $additionalData,
+    ): static {
         static::$additionalData = $additionalData;
 
-        return new static;
+        return new static();
     }
 
     /**
      * Response :D
-     *
-     * @param int $statusCode
-     * @return \Illuminate\Http\JsonResponse
      */
-    public static function response(int $statusCode = 200): \Illuminate\Http\JsonResponse
-    {
-        if ($statusCode === 0) $statusCode = 500;
-        if (self::$message) $message = self::$message;
-        else $message = self::$code ? __(self::$codePrefix .'.' . self::$code) : null;
+    public static function response(
+        int $statusCode = 200,
+    ): JsonResponse {
+        if (0 === $statusCode) {
+            $statusCode = 500;
+        }
+        if (self::$message) {
+            $message = self::$message;
+        } else {
+            $message = self::$code ? __(key: self::$codePrefix . '.' . self::$code) : null;
+        }
 
-        if (gettype(self::$data) === 'array') {
-            if (key_exists('data', self::$data)) {
-                $response = collect(self::$data);
-                $response = $response->merge([
+        if ('array' === gettype(value: self::$data)) {
+            if (array_key_exists(key: 'data', array: self::$data)) {
+                $response = collect(value: self::$data);
+                $response = $response->merge(items: [
                     'code' => self::$code,
                     'errors' => self::$errors,
                     'additional_data' => self::$additionalData,
@@ -157,15 +150,27 @@ class ApiResponse
             ];
         }
 
-        return response()->json($response)->setStatusCode($statusCode);
+        return response()->json(data: $response)->setStatusCode(code: $statusCode);
     }
 
-    public static function exception(\Exception $exception): \Illuminate\Http\JsonResponse
-    {
-        if (env('APP_DEBUG')) dd($exception);
+    /**
+     * Handles exception
+     */
+    public static function exception(
+        Exception $exception,
+    ): JsonResponse {
+        if (env('APP_DEBUG')) {
+            dd($exception);
+        }
 
-        self::$message = __('wamesk-api-response.exception-message', ['file' => $exception->getFile(), 'line' => $exception->getLine()]);
+        Log::build([
+            'driver' => 'single',
+            'path' => storage_path(path: 'logs/errors/' . date(format: 'Y-m-d') . '.log'),
+        ])
+            ->error(message: $exception);
 
-        return self::response(500);
+        self::$message = __(key: 'wamesk-api-response.server-error');
+
+        return self::response(statusCode: 500);
     }
 }

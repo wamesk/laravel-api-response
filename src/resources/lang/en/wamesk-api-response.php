@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 return [
-    "exception-message" => "Exception found in file :file on line :line",
+    'server-error' => 'Server error',
 ];

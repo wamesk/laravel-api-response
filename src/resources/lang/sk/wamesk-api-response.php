@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 return [
-    "exception-message" => "Chyba nájdená v súbore :file na riadku :line",
+    'server-error' => 'Serverová chyba',
 ];
