@@ -1,7 +1,7 @@
 {
     "name": "wamesk/laravel-api-response",
     "description": "Laravel api response helper.",
-    "version": "1.2",
+    "version": "1.2.1",
     "keywords": [
         "helper",
         "laravel",
