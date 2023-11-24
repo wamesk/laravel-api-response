@@ -163,9 +163,10 @@ class ApiResponse
             dd($exception);
         }
 
+        $fileName = date(format: 'Y-m-d') . '.log';
         Log::build([
             'driver' => 'single',
-            'path' => storage_path(path: 'logs/errors/' . date(format: 'Y-m-d') . '.log'),
+            'path' => storage_path(path: implode(separator: DIRECTORY_SEPARATOR, array: ['logs', 'errors', $fileName])),
         ])
             ->error(message: $exception);
 
